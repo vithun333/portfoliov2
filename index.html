@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>VITHUN — Portfolio</title>
+<meta name="description" content="Vithun — product designer focused on interactive experiences." />
+<script>(function(){function mob(){return matchMedia('(pointer:coarse)').matches||innerWidth<=700;}  /* touch devices (phones + tablets, both orientations) -> mobile; mouse devices -> desktop */
+function chk(){if(mob())location.replace('mobile.html'+location.hash);}chk();
+var t;addEventListener('resize',function(){clearTimeout(t);t=setTimeout(chk,300);});})();</script>
+<script>if(location.hash==='#contact')document.documentElement.classList.add('go-contact')</script>
+<script>if(/^#(work-|projects|home)/.test(location.hash))document.documentElement.classList.add('work-return')</script>
+<link rel="preconnect" href="https://api.fontshare.com" crossorigin>
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@500,700&display=swap" rel="stylesheet">
+<style>
+@font-face{font-family:'Humanism';src:url('fonts/humanism-bolddemo.otf') format('opentype');font-weight:700;font-display:swap}
+@font-face{font-family:'Humanism';src:url('fonts/humanism-regulardemo.otf') format('opentype');font-weight:400;font-display:swap}
+:root{--bg:#0a0a0a;--bg2:#141414;--ink:#f3f3f3;--muted:#8f8f8f;--orange:#FF6A00;--ease:cubic-bezier(.16,1,.3,1)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#000;color:var(--ink);font-family:'Satoshi','Inter',system-ui,sans-serif;font-weight:500;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+@media (pointer:fine){*{cursor:none !important}}
+#driver{position:relative;width:100%;height:900vh;z-index:0;pointer-events:none}
+
+.cursor-dot{position:fixed;top:0;left:0;width:14px;height:14px;border-radius:50%;background:var(--orange);pointer-events:none;z-index:9999;box-shadow:0 0 18px rgba(255,106,0,.6);transition:width .25s var(--ease),height .25s var(--ease),background .25s}
+.cursor-dot.big{width:46px;height:46px;background:rgba(255,106,0,.22);border:1px solid var(--orange);box-shadow:none}
+.cursor-dot.dark{background:#0a0a0a;box-shadow:0 0 16px rgba(0,0,0,.5)}
+.cursor-dot.dark.big{background:rgba(0,0,0,.22);border-color:#0a0a0a}
+.cursor-dot.light{background:#fff;box-shadow:0 0 16px rgba(255,255,255,.5)}
+.cursor-dot.light.big{background:rgba(255,255,255,.22);border-color:#fff}
+@media (pointer:coarse){.cursor-dot{display:none}}
+
+.stage{position:fixed;inset:0;width:100%;height:100vh;overflow:hidden;will-change:transform}
+#heroStage{z-index:10;background:var(--bg);display:flex;align-items:center;justify-content:center;will-change:transform,filter}
+#projStage{z-index:20;background:var(--bg2);box-shadow:0 -44px 90px rgba(0,0,0,.55)}
+#skillsStage{z-index:30;background:var(--bg2)}
+
+/* HERO */
+.portrait{position:absolute;inset:0;opacity:0;overflow:hidden;perspective:1200px;z-index:1}
+.portrait .photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 20%;filter:grayscale(1) contrast(1.05) brightness(.82);transform:scale(1.45);transform-origin:50% 32%}
+#helmetSvg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:0;transition:opacity .4s ease;transform-origin:50% 40%;will-change:transform}
+.portrait.show-helmet #helmetSvg{opacity:1}
+#helmetImg{filter:drop-shadow(0 24px 40px rgba(0,0,0,.7))}
+#gradient{position:absolute;top:0;left:0;width:calc(100% + 180px);height:calc(100% + 100px);z-index:2;will-change:opacity}  /* oversized so the in-canvas NEAT badge (bottom-right) is clipped off-screen */
+#vmark{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:4;font-family:'Humanism',sans-serif;font-weight:700;font-size:clamp(56px,15.6vw,150px);letter-spacing:2px;color:#0a0a0a;white-space:nowrap;pointer-events:none;will-change:transform,opacity}
+.scroll-hint{position:fixed;left:50%;bottom:30px;transform:translateX(-50%);z-index:40;font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:#000;font-weight:700}
+.scroll-hint::after{content:"";display:block;width:1px;height:32px;margin:12px auto 0;background:linear-gradient(#000,transparent);animation:drip 1.8s infinite}
+@keyframes drip{0%{opacity:0;transform:scaleY(.2)}40%{opacity:1}100%{opacity:0;transform:scaleY(1)}}
+
+/* shared centre line element (one per page, aligns at the seam) */
+.cline{position:absolute;left:50%;top:0;transform:translateX(-50%);width:3px;height:100vh;background:rgba(255,255,255,.16)}
+.cfill{position:absolute;left:0;top:0;width:100%;background:var(--orange);border-radius:3px;box-shadow:0 0 16px rgba(255,106,0,.5)}
+
+/* PROJECTS */
+#projStage{display:grid;grid-template-columns:1.04fr 9vw .96fr;align-items:center;padding:0 5vw}
+#pline{height:100vh}#pfill{height:0%}
+.cards{position:relative;height:84vh;grid-column:1}
+.rightcol{grid-column:3;display:flex;flex-direction:column;justify-content:center;height:84vh;padding-left:1vw}
+.cardframe{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(43vw,620px);aspect-ratio:3/2;border-radius:14px;overflow:hidden;background:#1d1d1d;box-shadow:0 36px 80px rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.06);cursor:default;transition:transform .4s cubic-bezier(.2,.8,.3,1)}
+.cardframe.ready{cursor:pointer}
+.cardframe.ready:hover{transform:translate(-50%,-50%) scale(1.035)}   /* expand a touch on hover */
+.cardglow{position:absolute;left:50%;top:50%;width:min(43vw,620px);aspect-ratio:3/2;transform:translate(-50%,-50%);border-radius:24px;background:#FF6A00;filter:blur(55px);opacity:0;transition:opacity .5s ease;pointer-events:none}   /* orange glow behind the card */
+.cardglow.on{opacity:.82}
+.clayer{position:absolute;inset:0;will-change:clip-path}
+.clayer img{width:100%;height:100%;object-fit:cover}
+.ctag{position:absolute;left:20px;right:20px;bottom:18px;display:flex;justify-content:space-between;align-items:flex-end;gap:10px;z-index:50;pointer-events:none}
+.ctag b{font-size:24px;font-weight:700;letter-spacing:-.01em}
+.ctag small{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#e8e8e8;background:rgba(0,0,0,.45);padding:6px 11px;border-radius:20px;white-space:nowrap}
+.copen{position:absolute;top:16px;right:16px;z-index:50;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#111;background:#fff;padding:7px 12px;border-radius:20px;opacity:0;transition:.3s var(--ease);pointer-events:none}
+.cardframe.ready .copen{opacity:1}
+.fillhint{position:absolute;left:0;right:0;bottom:-30px;text-align:center;font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);z-index:50;opacity:.7}
+.proj-intro h2{font-size:clamp(17px,1.9vw,26px);font-weight:600;line-height:1.4;letter-spacing:-.01em}
+.proj-intro .rot-line{margin-top:2px;min-height:1.4em}
+#rotWord{display:inline-block;color:var(--orange);transition:opacity .38s var(--ease),transform .38s var(--ease)}
+.details{position:relative;height:50vh;margin-top:6vh}
+.detail{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-start;opacity:0;transform:translateY(24px);pointer-events:none;transition:opacity .5s var(--ease),transform .5s var(--ease)}
+.detail.active{opacity:1;transform:none;pointer-events:auto}
+.detail .kicker{font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.detail h3{font-family:'Humanism',sans-serif;font-weight:700;font-size:clamp(34px,4.2vw,60px);line-height:.98;margin-bottom:16px}
+.detail p{font-size:15px;line-height:1.6;color:#cfcfcf;max-width:30em;margin-bottom:24px}
+.detail .meta{display:flex;gap:34px;margin-bottom:26px;flex-wrap:wrap}
+.detail .meta div span{display:block;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.detail .meta div b{font-size:15px;font-weight:600}
+.detail .cta{display:inline-flex;align-items:center;gap:10px;font-size:13px;letter-spacing:.06em;padding:13px 22px;border-radius:40px;width:max-content;color:#0a0a0a;font-weight:700;transition:transform .3s var(--ease)}
+.detail .cta:hover{transform:translateX(4px)}
+
+/* SKILLS */
+#sline{height:50vh}#sfill{height:100%}
+#brain{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:2}
+#brain img{width:92px;height:auto;display:block;opacity:.92}
+#skLabel{position:absolute;top:7vh;left:7vw;font-size:clamp(22px,3vw,40px);font-weight:700;letter-spacing:-.01em;z-index:4;opacity:0}
+.skills-arena{position:absolute;inset:0;z-index:3}
+.links-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
+.links-svg line{stroke:rgba(255,255,255,.32);stroke-width:1}
+.skill-node{position:absolute;z-index:3;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#fff;box-shadow:0 8px 22px rgba(0,0,0,.45);transition:box-shadow .2s var(--ease),scale .2s var(--ease);will-change:transform;opacity:0}
+.skill-node img{border-radius:6px}
+.skill-node img{width:52%;height:52%;object-fit:contain;pointer-events:none}
+.skill-node .fallback{font-weight:700;color:#222;font-size:15px}
+.skill-node .name{position:absolute;top:calc(100% + 10px);left:50%;transform:translateX(-50%) translateY(6px);white-space:nowrap;font-size:13px;letter-spacing:.04em;color:#fff;opacity:0;transition:.22s var(--ease);pointer-events:none;font-weight:600}
+.skill-node.hover{box-shadow:0 14px 34px rgba(255,106,0,.4),0 0 0 2px var(--orange)}
+.skill-node.hover .name{opacity:1;transform:translateX(-50%) translateY(0)}
+#skHint{position:absolute;bottom:5vh;left:0;right:0;text-align:center;font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--muted);z-index:4;opacity:0}
+
+@media (max-width:860px){
+  #projStage{grid-template-columns:1fr;grid-auto-rows:min-content;align-content:center;gap:16px;padding:12vh 6vw 5vh}
+  .cards{height:54vh}.cardframe{width:86vw}.cardglow{width:86vw}
+  .rightcol{height:auto;padding:0}
+  .details{height:auto;margin-top:3vh}.detail{position:relative;opacity:1;transform:none}.detail:not(.active){display:none}
+  .cline{left:8vw}
+}
+
+/* ===== drag-select fix ===== */
+img{-webkit-user-drag:none;user-drag:none}
+.skills-arena,.skill-node,.skill-node *,#carousel,#ring,.car-card{user-select:none;-webkit-user-select:none;-webkit-user-drag:none}
+
+/* ===== ABOUT (overlays the hero face) ===== */
+#about{position:absolute;inset:0;z-index:6;opacity:0;pointer-events:none;
+  background:linear-gradient(90deg,rgba(8,8,8,.92) 0%,rgba(8,8,8,.55) 18%,transparent 34%,transparent 66%,rgba(8,8,8,.55) 82%,rgba(8,8,8,.92) 100%)}
+.ab-side{position:absolute;top:50%;transform:translateY(-50%);width:31vw;max-width:500px}
+.ab-left{left:5vw}.ab-right{right:5vw;text-align:right}
+.ab-tag{display:block;font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--orange);margin-bottom:14px;font-weight:700}
+.ab-side p{font-size:clamp(13px,1.05vw,16px);line-height:1.65;color:#e7e7e7;text-wrap:balance}
+.ab-meta{position:absolute;bottom:7vh}.ab-exp{left:5vw}.ab-loc{right:5vw;text-align:right}
+.ab-meta span{display:block;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.ab-meta b{font-family:'Humanism',sans-serif;font-size:22px;font-weight:700}
+
+/* ===== TOP NAV ===== */
+#topnav{position:fixed;top:0;left:0;right:0;z-index:340;display:flex;justify-content:space-between;align-items:center;padding:24px 5vw}
+#logo{font-family:'Humanism',sans-serif;font-weight:700;font-size:20px;letter-spacing:.04em;color:#fff;transition:color .3s ease}
+#burger{background:none;border:none;width:34px;height:22px;position:relative;display:flex;flex-direction:column;justify-content:space-between;transition:transform .65s cubic-bezier(.5,.1,.2,1)}
+#burger.spin{transform:rotate(360deg)}
+#burger span{display:block;height:2px;width:100%;background:#fff;transition:transform .3s var(--ease),background .3s ease}
+#topnav.dark #logo{color:#0a0a0a}
+#topnav.dark #burger span{background:#0a0a0a}
+#burger:hover span:first-child{transform:translateY(2px)}
+#burger:hover span:last-child{transform:translateY(-2px)}
+
+/* ===== POPUP MENU ===== */
+#menuPop{position:fixed;top:66px;right:5vw;z-index:320;background:#171717;border:1px solid rgba(255,255,255,.09);
+  border-radius:20px;padding:16px 30px 18px;min-width:240px;box-shadow:0 30px 70px rgba(0,0,0,.55);
+  transform-origin:calc(100% - 6px) -16px;transform:scale(0);opacity:0;pointer-events:none;
+  transition:transform .5s cubic-bezier(.34,1.6,.4,1),opacity .12s ease}
+#menuPop.open{transform:none;opacity:1;pointer-events:auto}
+.ov-link{display:flex;align-items:baseline;gap:14px;white-space:nowrap;font-family:'Humanism',sans-serif;font-weight:700;
+  font-size:36px;line-height:1.25;color:#ececec;transition:color .2s,padding-left .25s var(--ease)}
+.ov-link em{font-style:normal;font-family:'Satoshi',sans-serif;font-size:13px;letter-spacing:.16em;color:var(--orange);width:24px;flex:none}
+.ov-link:hover{color:var(--orange);padding-left:6px}
+/* ===== FULL VIEWS (carousel / contact) ===== */
+.ov-fs{position:fixed;inset:0;z-index:310;background:#0a0a0a;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;clip-path:circle(0% at calc(100% - 7vw) 34px);transition:clip-path .7s var(--ease),opacity .4s ease}
+.ov-fs.open{opacity:1;pointer-events:auto;clip-path:circle(160% at calc(100% - 7vw) 34px)}
+html.go-contact{overflow:hidden}
+html.go-contact #viewContact{opacity:1;pointer-events:auto;clip-path:circle(160% at calc(100% - 7vw) 34px);transition:none}  /* contact ready underneath the cover */
+html.go-contact #pageFade{opacity:1}  /* black cover on arrival — no homepage flash, then fades out */
+html.work-return #pageFade{opacity:1}  /* same cover when returning from a case study to a project */
+/* ===== preloader ===== */
+#loader{position:fixed;inset:0;z-index:10000;background:#0a0a0a;display:flex;align-items:center;justify-content:center;transition:opacity .6s ease}
+#loader.out{opacity:0;pointer-events:none}
+html.work-return #loader,html.go-contact #loader{display:none}   /* no preloader when returning to a project / contact — the fade-cover handles those */
+.ld-word{font-family:'Humanism',sans-serif;font-weight:700;font-size:clamp(56px,15.6vw,150px);letter-spacing:2px;color:#fff;display:flex;align-items:center;white-space:nowrap;line-height:1}
+.ld-v{display:inline-block;transform-origin:50% 50%;animation:vspin 2.8s cubic-bezier(.16,.8,.28,1) infinite}
+.ld-rest{display:inline-block;overflow:hidden;max-width:0;opacity:0;transition:max-width .95s cubic-bezier(.22,1,.3,1),opacity .65s ease}
+#loader.reveal .ld-v{animation:none}
+#loader.reveal .ld-rest{opacity:1}
+@keyframes vspin{0%{transform:rotate(0)}32%{transform:rotate(360deg)}100%{transform:rotate(360deg)}}
+.ov-x{display:none}  /* close via the vithun logo (top-left) instead */
+.ov-x::before,.ov-x::after{content:"";position:absolute;left:0;top:14px;width:30px;height:2px;background:#fff}
+.ov-x::before{transform:rotate(45deg)}.ov-x::after{transform:rotate(-45deg)}
+
+/* ===== 3D CAROUSEL ===== */
+#glcanvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
+#carLabel{position:absolute;left:0;top:0;transform:translate(-50%,0);text-align:center;z-index:5;pointer-events:none;opacity:0;transition:opacity .2s ease}
+#carLabel b{font-family:'Humanism',sans-serif;font-weight:700;font-size:24px;display:block;margin-bottom:4px}
+#carLabel span{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+#carousel{width:100%;height:86vh;perspective:1200px;display:flex;align-items:center;justify-content:center}
+#ring{position:relative;width:0;height:0;transform-style:preserve-3d;will-change:transform}
+.car-card{position:absolute;top:0;left:0;width:300px;height:200px;margin:-100px 0 0 -150px;transform-style:preserve-3d;cursor:pointer}
+.car-card .cfront,.car-card .cback{position:absolute;inset:0;border-radius:12px;overflow:hidden;backface-visibility:hidden;border:1px solid rgba(255,255,255,.12);box-shadow:0 24px 50px rgba(0,0,0,.55)}
+.car-card .cfront{background:#111;transition:transform .25s var(--ease),box-shadow .25s var(--ease)}
+.car-card:hover .cfront{transform:scale(1.06);box-shadow:0 30px 70px rgba(255,106,0,.4),0 0 0 2px var(--orange)}
+.car-card .cback{background:#171717;transform:rotateY(180deg);display:flex;align-items:center;justify-content:center}
+.car-card .cback span{font-family:'Humanism',sans-serif;font-weight:700;font-size:15px;color:#444;letter-spacing:.06em}
+.car-card img{width:100%;height:100%;object-fit:cover;pointer-events:none}
+.car-card .clabel{position:absolute;left:14px;right:14px;bottom:12px;text-shadow:0 2px 8px rgba(0,0,0,.6)}
+.car-card .clabel b{display:block;font-size:18px;font-weight:700}
+.car-card .clabel small{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#cfcfcf}
+.car-hint{position:absolute;bottom:6vh;left:0;right:0;text-align:center;font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--muted)}
+
+/* ===== CONTACT FORM ===== */
+.contact-wrap{width:min(560px,84vw)}
+.contact-wrap h3{font-family:'Humanism',sans-serif;font-weight:700;font-size:clamp(28px,4vw,52px);margin-bottom:34px}
+#contactForm{display:flex;flex-direction:column;gap:20px}
+#contactForm label{display:flex;flex-direction:column;gap:8px;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+#contactForm input,#contactForm textarea{background:#1b1b1b;border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:14px 16px;color:#fff;font-family:inherit;font-size:15px;font-weight:500;transition:border-color .2s;resize:vertical}
+#contactForm input:focus,#contactForm textarea:focus{outline:none;border-color:var(--orange)}
+#contactSubmit{margin-top:8px;background:#fff;color:#0a0a0a;border:none;border-radius:40px;padding:15px;font-weight:700;font-size:15px;letter-spacing:.04em;transition:background .2s,color .2s}
+#contactSubmit:hover{background:var(--orange);color:#0a0a0a}
+.social-link{display:inline-flex;margin-top:30px;color:#bdbdbd;transition:transform .35s cubic-bezier(.2,1,.3,1),color .35s,filter .35s;will-change:transform}
+.social-link svg{width:36px;height:36px;fill:currentColor;display:block}
+.social-link:hover,.social-link:focus-visible{transform:scale(1.42);color:var(--orange);filter:drop-shadow(0 0 15px rgba(255,106,0,.9));outline:none}
+.ct-thanks{opacity:0;transform:translateY(10px);transition:opacity .55s ease,transform .55s ease}
+.ct-thanks.in{opacity:1;transform:none}
+.goback{margin-top:26px;background:none;border:1px solid rgba(255,255,255,.28);color:#fff;border-radius:40px;padding:12px 28px;font-weight:700;font-size:14px;letter-spacing:.02em;cursor:pointer;transition:background .2s,color .2s}
+.goback:hover{background:#fff;color:#0a0a0a}
+
+/* ===== PAGE TRANSITION FADE ===== */
+#pageFade{position:fixed;inset:0;z-index:500;background:#0a0a0a;opacity:0;pointer-events:none;transition:opacity .5s ease;display:flex;align-items:center;justify-content:center}
+#pageFade.show{opacity:1;pointer-events:auto}
+.pf-v{font-family:'Humanism',sans-serif;font-weight:700;font-size:66px;color:#fff;opacity:0;transition:opacity .3s ease;transform-origin:50% 50%}
+#pageFade.loading .pf-v{opacity:1;animation:pfspin 2.6s cubic-bezier(.16,.8,.28,1) infinite}
+@keyframes pfspin{0%{transform:rotate(0)}34%{transform:rotate(360deg)}100%{transform:rotate(360deg)}}
+#top{position:absolute;top:0;left:0;width:1px;height:1px}
+
+@media (max-width:860px){
+  #about{background:linear-gradient(180deg,rgba(8,8,8,.6),rgba(8,8,8,.9))}
+  .ab-side{position:relative;top:auto;transform:none;width:auto;left:auto;right:auto;text-align:left;padding:0 6vw}
+  .ab-left{margin-top:14vh}.ab-right{margin-top:4vh}.ab-right{text-align:left}
+  .ab-meta{display:none}
+}
+</style>
+</head>
+<body>
+<div id="loader"><div class="ld-word"><span class="ld-v">V</span><span class="ld-rest">ITHUN</span></div></div>
+<div class="cursor-dot" id="cursor"></div>
+
+<!-- TOP NAV -->
+<header id="topnav">
+  <a id="logo">vithun</a>
+  <button id="burger" aria-label="Open menu"><span></span><span></span></button>
+</header>
+
+<!-- POPUP MENU -->
+<div id="menuPop" aria-hidden="true">
+  <a class="ov-link" data-view="home"><em>01</em><span>home</span></a>
+  <a class="ov-link" data-view="projects"><em>02</em><span>projects</span></a>
+  <a class="ov-link" data-view="contact"><em>03</em><span>contact</span></a>
+</div>
+
+<!-- FULL VIEWS -->
+<div class="ov-fs" id="viewProjects" aria-hidden="true">
+  <button class="ov-x" aria-label="Close"></button>
+  <canvas id="glcanvas"></canvas>
+  <div id="carLabel"></div>
+  <div class="car-hint">drag · scroll · click a project</div>
+</div>
+<div class="ov-fs" id="viewContact" aria-hidden="true">
+  <button class="ov-x" aria-label="Close"></button>
+  <div class="contact-wrap">
+    <h3>Let's build something.</h3>
+    <form id="contactForm">
+      <label>Name<input type="text" name="name" autocomplete="off" required></label>
+      <label>Email<input type="email" name="email" autocomplete="off" required></label>
+      <label>Message<textarea name="message" rows="5" required></textarea></label>
+      <button type="submit" id="contactSubmit">Submit</button>
+    </form>
+    <a class="social-link" href="https://www.linkedin.com/in/srivithun-geetha-vinu-05b995241/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn profile">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.63-1.85 3.36-1.85 3.59 0 4.25 2.36 4.25 5.44v6.3zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"/></svg>
+    </a>
+  </div>
+</div>
+
+<!-- page-transition fade -->
+<div id="pageFade"><span class="pf-v">V</span></div>
+
+<div id="top"></div>
+<div id="driver"></div>
+
+<!-- HERO -->
+<section class="stage" id="heroStage">
+  <canvas id="gradient"></canvas>
+  <div class="portrait" id="portrait">
+    <img class="photo" id="photo" src="pfp.png" alt="Vithun" />
+    <svg id="helmetSvg" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="goo"><feGaussianBlur in="SourceGraphic" stdDeviation="13" result="b"/>
+          <feColorMatrix in="b" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -10"/></filter>
+        <mask id="hmask"><g id="blobs" filter="url(#goo)"></g></mask>
+      </defs>
+      <image id="helmetImg" href="helmet.png" mask="url(#hmask)" preserveAspectRatio="xMidYMid meet"/>
+    </svg>
+  </div>
+  <div id="vmark">VITHUN</div>
+  <div id="about">
+    <div class="ab-side ab-left">
+      <span class="ab-tag">.about</span>
+      <p>I'm a UX designer and third-year Interactive Arts and Technology student at SFU, passionate about crafting intuitive digital experiences that blend research, Human-Computer Interaction principles, and visual design. I enjoy transforming complex problems into products that feel simple, engaging, and satisfying to use, with a strong focus on accessibility, usability, and meaningful user impact.</p>
+    </div>
+    <div class="ab-side ab-right">
+      <span class="ab-tag">.inspiration</span>
+      <p>As a child, watching Tony Stark interact with J.A.R.V.I.S. sparked a fascination with the idea of technology that feels effortless and deeply human. In that moment, I knew I wanted to pursue a career dedicated to designing the kinds of intelligent, intuitive experiences that once felt like&nbsp;science&nbsp;fiction.</p>
+    </div>
+    <div class="ab-meta ab-exp"><span>.experience</span><b>3 years</b></div>
+    <div class="ab-meta ab-loc"><span>.location</span><b>Vancouver, BC</b></div>
+  </div>
+</section>
+<div class="scroll-hint" id="scrollHint">keep scrolling</div>
+
+<!-- PROJECTS -->
+<section class="stage" id="projStage">
+  <div class="cline" id="pline"><div class="cfill" id="pfill"></div></div>
+  <div class="cards" id="cards"></div>
+  <div class="rightcol" id="rightcol">
+    <div class="proj-intro">
+      <h2>Some projects I've done with focus on</h2>
+      <h2 class="rot-line"><span id="rotWord">interactive experiences.</span></h2>
+    </div>
+    <div class="details" id="details"></div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section class="stage" id="skillsStage">
+  <div class="cline" id="sline"><div class="cfill" id="sfill"></div></div>
+  <div id="skLabel"></div>
+  <div id="brain"><img src="brain.png" alt="brain"></div>
+  <div class="skills-arena" id="arena"><svg class="links-svg" id="links"></svg></div>
+  <div id="skHint">drag &amp; throw the tools · they collide</div>
+</section>
+
+<!-- heavy libs loaded after the loader has painted -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="cardtex.js"></script>
+<script src="neat.min.js"></script>
+<script>
+/* ===== preloader: V spins until loaded, then reveals the name ===== */
+(function(){var L=document.getElementById('loader');if(!L)return;
+  if(/^#(work-|contact|projects|home)/.test(location.hash)){L.parentNode&&L.remove();return;}   // skip on return-to-project / contact / carousel / home (their own covers handle it)
+  var V=L.querySelector('.ld-v'),rest=L.querySelector('.ld-rest'),ready=false,done=false;
+  function reveal(){if(done)return;done=true;
+    V.style.animation='none';void V.offsetWidth;                                  // stop the infinite spin (V reverts to 0°)
+    V.style.transition='transform .6s cubic-bezier(.2,.85,.3,1)';V.style.transform='rotate(360deg)';   // one final decelerating turn → lands perfectly upright
+    var did=false;function go(){if(did)return;did=true;                           // reveal ITHUN only once the V has settled upright
+      L.classList.add('reveal');rest.style.maxWidth=rest.scrollWidth+'px';        // slide ITHUN out
+      setTimeout(function(){L.classList.add('out');setTimeout(function(){L.remove();},700);},1250);}
+    V.addEventListener('transitionend',go,{once:true});setTimeout(go,700);}       // fallback if transitionend doesn't fire
+  V.addEventListener('animationiteration',function(){if(ready)reveal();});        // only stop once a full spin completes — keeps spinning while loading
+  function loaded(){ready=true;setTimeout(function(){if(!done)reveal();},5000);}  // fallback so it never sticks
+  if(document.readyState==='complete')loaded();else window.addEventListener('load',loaded);
+})();
+</script>
+<script>
+/* ===================== DATA ===================== */
+const PROJECTS=[
+ {name:"tidbit",cat:"UI/UX Hackathon",color:"#F5821F",img:"tb1.png",blurb:"A quick cooking app you browse by swiping, turning recipe overload into simple instructions you follow one step at a time, built in a single day.",year:"2024",time:"1 day"},
+ {name:"Vancouver Police Museum",cat:"UI/UX",color:"#3B82F6",img:"VPMD.png",blurb:"An accessibility focused museum app grounded in four months of on site research and stakeholder collaboration.",year:"2025",time:"4 months"},
+ {name:"Zealty",cat:"UX Research",color:"#EC4899",img:"ZD.png",blurb:"A comparative usability study against REW with redesign recommendations for Zealty's product team, all backed by research.",year:"2025",time:"4 months"},
+ {name:"Echo of Motion",cat:"Wearable Interaction",color:"#EF4444",img:"EOMD.png",blurb:"A wearable drawing interface that translates wrist movement into expressive lines in real time on a digital canvas.",year:"2026",time:"1 month"},
+ {name:"The Uneven Wave",cat:"Frontend / Data Viz",color:"#CDB89A",img:"TUVD.png",blurb:"An interactive data visualization site, driven by scrolling, that explores AI spread through Gaming, Marketing, and Media.",year:"2026",time:"2 months"},
+];
+const SKILLS=[{name:"Figma",fb:"Fi",img:"figma.svg"},{name:"Photoshop",fb:"Ps",img:"photoshop.png"},{name:"After Effects",fb:"Ae",img:"aftereffects.jpg"},{name:"Illustrator",fb:"Ai",img:"illustrator.jpg"},{name:"Framer",fb:"Fr",img:"framer.svg"},{name:"VS Code",fb:"VS",img:"vscode.png"},{name:"GitHub",fb:"Gh",img:"github.svg"},{name:"Notion",fb:"No",img:"notion.svg"},{name:"Observable",fb:"Ob",img:"observable.svg"},{name:"Claude",fb:"Cl",img:"claude.png"},{name:"ProtoPie",fb:"Pp",img:"protopie.png"}];
+const ROT=["interactive experiences.","software interfaces.","frontend development.","research proven designs.","human computer interactions."];
+const N=PROJECTS.length,clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),smooth=u=>{u=clamp(u,0,1);return u*u*(3-2*u)},byId=id=>document.getElementById(id),SVGNS='http://www.w3.org/2000/svg';
+const backOut=x=>{x=clamp(x,0,1);const c1=2.2,c3=c1+1;return 1+c3*Math.pow(x-1,3)+c1*Math.pow(x-1,2)};
+const A=0.20, B=0.28, C=0.64, D=0.72;   // hero / →proj / proj / →skills
+
+/* ===== element refs ===== */
+const heroStage=byId('heroStage'),projStage=byId('projStage'),skillsStage=byId('skillsStage');
+const pfill=byId('pfill'),skLabel=byId('skLabel'),skHint=byId('skHint'),scrollHint=byId('scrollHint'),aboutEl=byId('about'),topnav=byId('topnav'),cursorDot=byId('cursor');
+const portrait=byId('portrait'),photo=byId('photo'),vmark=byId('vmark'),gradientCv=byId('gradient'),helmetSvg=byId('helmetSvg'),helmetImg=byId('helmetImg'),blobs=byId('blobs');
+
+/* ===== custom cursor ===== */
+(function(){let x=innerWidth/2,y=innerHeight/2,tx=x,ty=y;
+  addEventListener('mousemove',e=>{tx=e.clientX;ty=e.clientY;});
+  (function loop(){x+=(tx-x)*0.2;y+=(ty-y)*0.2;cursorDot.style.transform=`translate(${x-7}px,${y-7}px)`;requestAnimationFrame(loop);})();
+  document.addEventListener('mouseover',e=>{if(e.target.closest('a,button,.cardframe.ready,.skill-node,.car-card'))cursorDot.classList.add('big');});
+  document.addEventListener('mouseout',e=>{if(e.target.closest('a,button,.cardframe.ready,.skill-node,.car-card'))cursorDot.classList.remove('big');});})();
+
+/* ===== rotating word ===== */
+(function(){const el=byId('rotWord');let i=0;setInterval(()=>{el.style.opacity=0;el.style.transform='translateY(-8px)';setTimeout(()=>{i=(i+1)%ROT.length;el.textContent=ROT[i];el.style.opacity=1;el.style.transform='none';},380);},2600);})();
+
+/* ===== page transition ===== */
+const pageFade=byId('pageFade');
+(function(){const H=document.documentElement;   // if the arrival cover lingers (heavy page), reveal the spinning V — just the V, no VITHUN
+  if(H.classList.contains('work-return')||H.classList.contains('go-contact'))
+    setTimeout(()=>{if(H.classList.contains('work-return')||H.classList.contains('go-contact'))pageFade.classList.add('loading');},380);
+})();
+function goProject(url){pageFade.classList.add('show');setTimeout(()=>{location.href=url;},520);}
+
+/* ===== hero: VITHUN knockout zoom → photo → liquid helmet → about ===== */
+let trail=[],inHero=false,lastBX=null,lastBY=null;
+function setupHelmet(){const w=innerWidth,h=innerHeight;
+  helmetSvg.setAttribute('viewBox',`0 0 ${w} ${h}`);
+  const hw=Math.min(w,h)*0.82,hh=hw,hx=w/2-hw/2+20,hy=h*0.36-hh/2;   // larger helmet (covers the hair), nudged right
+  helmetImg.setAttribute('x',hx);helmetImg.setAttribute('y',hy);helmetImg.setAttribute('width',hw);helmetImg.setAttribute('height',hh);
+  blobs.innerHTML='';trail=[];lastBX=lastBY=null;
+}
+function dropBlob(mx,my){const c=document.createElementNS(SVGNS,'circle');c.setAttribute('cx',mx);c.setAttribute('cy',my);c.setAttribute('fill','#fff');
+  const o={el:c,r:Math.min(innerWidth,innerHeight)*0.095};c.setAttribute('r',o.r);blobs.appendChild(c);trail.push(o);
+  if(trail.length>180){const old=trail.shift();old.el.remove();}}
+function addBlob(mx,my){   // fill the whole path so the trail is smooth & continuous (no popping dot)
+  if(lastBX===null){lastBX=mx;lastBY=my;dropBlob(mx,my);return;}
+  const dx=mx-lastBX,dy=my-lastBY,dist=Math.hypot(dx,dy),step=9;if(dist<3)return;
+  for(let d=step;d<dist;d+=step)dropBlob(lastBX+dx*d/dist,lastBY+dy*d/dist);
+  dropBlob(mx,my);lastBX=mx;lastBY=my;
+}
+(function decay(){for(let i=trail.length-1;i>=0;i--){const o=trail[i];o.r*=0.987;if(o.r<0.8){o.el.remove();trail.splice(i,1);}else o.el.setAttribute('r',o.r);}requestAnimationFrame(decay);})();  // trail lingers, then melts away slowly when the cursor is still
+addEventListener('mousemove',e=>{if(inHero&&portrait.classList.contains('show-helmet'))addBlob(e.clientX,e.clientY);});
+function layout(){setupHelmet();}
+function renderHero(t){
+  const z=clamp(t/0.46,0,1);
+  vmark.style.transform=`translate(-50%,-50%) scale(${1+z*z*20})`;            // VITHUN zooms
+  const fade=z<0.7?1:1-smooth((z-0.7)/0.3);                                   // gradient + VITHUN fade as the zoom completes
+  vmark.style.opacity=fade;gradientCv.style.opacity=fade;
+  portrait.style.opacity=smooth(clamp((t-0.30)/0.34,0,1));                    // photo fades in underneath
+  portrait.classList.toggle('show-helmet',t>0.55);   // once the face is revealed, hover paints the helmet
+  const a=smooth(clamp((t-0.60)/0.40,0,1));
+  aboutEl.style.opacity=a;aboutEl.style.transform=`translateY(${(1-a)*22}px)`;
+}
+/* ===== orange/red/yellow 3D WIREFRAME gradient (Neat — GPU). Created once; hidden with display:none past the hero so Neat's own visibility observer pauses it (smooth on the rest of the page). ===== */
+let neat=null;
+if(window.NeatGradient){neat=new NeatGradient({ref:gradientCv,colors:[{color:'#FF1E12',enabled:true},{color:'#FF6A00',enabled:true},{color:'#FFC400',enabled:true},{color:'#FF9D2F',enabled:true},{color:'#C81025',enabled:true},{color:'#FFE08A',enabled:false}],speed:2,horizontalPressure:2,verticalPressure:5,waveFrequencyX:2,waveFrequencyY:2,waveAmplitude:5,shadows:10,highlights:8,colorBrightness:1,colorSaturation:10,wireframe:true,colorBlending:6,backgroundColor:'#FF5A1F',backgroundAlpha:1,resolution:0.6});}
+
+/* ===== projects: cards (liquid reveal) + detail panels ===== */
+let curIdx=0;
+const cardsWrap=byId('cards'),detailsWrap=byId('details');
+const cardFrame=document.createElement('div');cardFrame.className='cardframe';
+const layerEls=PROJECTS.map((p,i)=>{const d=document.createElement('div');d.className='clayer';d.style.zIndex=i;d.innerHTML=`<img src="${p.img}" alt="${p.name}">`;cardFrame.appendChild(d);return d;});
+const ctag=document.createElement('div');ctag.className='ctag';cardFrame.appendChild(ctag);
+const copen=document.createElement('div');copen.className='copen';copen.textContent='open ↗';cardFrame.appendChild(copen);
+const fillhint=document.createElement('div');fillhint.className='fillhint';fillhint.textContent='keep scrolling to reveal';cardFrame.appendChild(fillhint);
+cardsWrap.appendChild(cardFrame);
+const cardGlow=document.createElement('div');cardGlow.className='cardglow';cardsWrap.insertBefore(cardGlow,cardFrame);   // gradient glow sits behind the card
+cardFrame.addEventListener('mouseenter',()=>{if(cardFrame.classList.contains('ready'))cardGlow.classList.add('on');});
+cardFrame.addEventListener('mouseleave',()=>cardGlow.classList.remove('on'));
+cardFrame.addEventListener('click',()=>{if(cardFrame.classList.contains('ready'))goProject('project.html?p='+curIdx);});
+const detailEls=PROJECTS.map((p,i)=>{const d=document.createElement('div');d.className='detail';
+  d.innerHTML=`<div class="kicker">${p.cat}</div><h3 style="color:${p.color}">${p.name}</h3><p>${p.blurb}</p>`
+    +`<div class="meta"><div><span>Year</span><b>${p.year}</b></div><div><span>Timeframe</span><b>${p.time}</b></div><div><span>Category</span><b>${p.cat}</b></div></div>`
+    +`<a class="cta" style="background:${p.color}" href="project.html?p=${i}">Open case study →</a>`;
+  detailsWrap.appendChild(d);return d;});
+
+function projPos(tp){const raw=tp*(N-1),base=Math.floor(raw+1e-6),frac=raw-base,HOLD=0.55;
+  let f=0;if(frac>HOLD)f=smooth((frac-HOLD)/(1-HOLD));return clamp(base+f,0,N-1);}
+function renderProjects(tp){
+  const pos=projPos(tp), base=Math.floor(pos+1e-6), fill=clamp(pos-base,0,1);
+  layerEls.forEach((el,i)=>{
+    const r = i<=base?150 : (i===base+1? fill*150 : 0);
+    const cp=`circle(${r}% at 100% 100%)`;el.style.clipPath=cp;el.style.webkitClipPath=cp;
+  });
+  const showIdx=clamp(fill>0.5?base+1:base,0,N-1);curIdx=showIdx;
+  const p=PROJECTS[showIdx];
+  ctag.innerHTML=`<b>${p.name}</b><small>${p.cat}</small>`;
+  const ready=fill<0.06||fill>0.94;
+  cardFrame.classList.toggle('ready',ready);
+  fillhint.style.opacity=ready?'0':'.7';
+  detailEls.forEach((d,i)=>d.classList.toggle('active',i===showIdx));
+  pfill.style.height=(smooth(tp)*100)+'%';
+}
+
+/* ===================== MASTER UPDATE ===================== */
+function update(p){
+  renderHero(clamp(p/A,0,1));
+  inHero=p<B;
+  gradientCv.style.display=(p<0.6)?'':'none';   // hide past the hero → Neat's visibility observer pauses it (perf)
+
+  const t1=smooth(clamp((p-A)/(B-A),0,1));
+  const t2=smooth(clamp((p-C)/(D-C),0,1));
+  heroStage.style.transform=`translateY(${-t1*7}vh) scale(${1-0.05*t1})`;
+  heroStage.style.filter=`brightness(${1-0.4*t1})`;
+  const projY=(p<B)?(1-t1)*100:-t2*100;
+  projStage.style.transform=`translateY(${projY}vh)`;
+  skillsStage.style.transform=`translateY(${(1-t2)*100}vh)`;
+  renderProjects(clamp((p-B)/(C-B),0,1));
+  const revT=clamp((p-D)/0.10,0,1);
+  renderSkillsReveal(revT);
+  scrollHint.style.opacity=p>0.02?'0':'0.85';
+  const viewOpen=document.querySelector('.ov-fs.open');
+  topnav.classList.toggle('dark',p<0.07&&!viewOpen);
+  cursorDot.classList.toggle('light',p<0.07);
+  heroStage.style.pointerEvents=p<A?'auto':'none';
+  projStage.style.pointerEvents=(p>=B-0.02&&p<C+0.04)?'auto':'none';
+  skillsStage.style.pointerEvents=revT>0.55?'auto':'none';
+}
+gsap.registerPlugin(ScrollTrigger);
+ScrollTrigger.create({trigger:"#driver",start:"top top",end:"bottom bottom",scrub:0.7,onUpdate:s=>update(s.progress)});
+
+/* ===================== SKILLS PHYSICS ===================== */
+let SK=null,skBuilt=false,skActive=false,SKSHOW=0;
+function buildSkills(){
+  if(skBuilt)return;const arena=byId('arena');if(!arena.clientWidth)return;skBuilt=true;
+  const {Engine,Runner,Bodies,Composite,Events}=Matter;const links=byId('links');
+  const W=arena.clientWidth,H=arena.clientHeight,cx=W/2,cy=H*0.5;   // centred brain
+  const brainEl=byId('brain');brainEl.style.left=cx+'px';brainEl.style.top=cy+'px';
+  const engine=Engine.create();engine.gravity.x=0;engine.gravity.y=0;engine.timing.timeScale=0.78;const world=engine.world;
+  const wall={isStatic:true,restitution:1,render:{visible:false}},tk=140;
+  Composite.add(world,[Bodies.rectangle(cx,-tk/2,W+2*tk,tk,wall),Bodies.rectangle(cx,H+tk/2,W+2*tk,tk,wall),
+    Bodies.rectangle(-tk/2,cy,tk,H+2*tk,wall),Bodies.rectangle(W+tk/2,cy,tk,H+2*tk,wall),
+    Bodies.circle(cx,cy,44,{isStatic:true,restitution:.9})]);
+  const R=Math.max(28,Math.min(46,Math.min(W,H)*0.052)),ring=Math.min(W,H)*0.33,nodes=[];
+  SKILLS.forEach((sk,i)=>{const ang=(-90+i*(360/SKILLS.length))*Math.PI/180,hx=cx+Math.cos(ang)*ring,hy=cy+Math.sin(ang)*ring;
+    const body=Bodies.circle(cx,cy,R,{isStatic:true,restitution:.55,frictionAir:.022,friction:.002,density:.003});Composite.add(world,body);
+    const el=document.createElement('div');el.className='skill-node';el.style.width=el.style.height=(R*2)+'px';
+    el.innerHTML=`<img src="${sk.img||'https://cdn.simpleicons.org/'+sk.slug}" alt="${sk.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="fallback" style="display:none">${sk.fb}</span><span class="name">${sk.name}</span>`;
+    arena.appendChild(el);el.addEventListener('mouseenter',()=>el.classList.add('hover'));el.addEventListener('mouseleave',()=>el.classList.remove('hover'));
+    const ln=document.createElementNS(SVGNS,'line');links.appendChild(ln);nodes.push({body,el,ln,R,hx,hy,rev:0,scl:0,lop:0});});
+  const mouse=Matter.Mouse.create(arena);
+  ['mousewheel','DOMMouseScroll'].forEach(ev=>mouse.element.removeEventListener(ev,mouse.mousewheel));
+  mouse.element.removeEventListener('touchstart',mouse.mousedown);
+  mouse.element.removeEventListener('touchmove',mouse.mousemove);
+  mouse.element.removeEventListener('touchend',mouse.mouseup);
+  arena.style.touchAction='pan-y';
+  let grab=false;const tpos=t=>{const r=arena.getBoundingClientRect();return {x:t.clientX-r.left,y:t.clientY-r.top};};
+  arena.addEventListener('touchstart',e=>{if(!skActive)return;const p=tpos(e.touches[0]);
+    if(Matter.Query.point(nodes.map(n=>n.body),p).length){grab=true;mouse.position.x=p.x;mouse.position.y=p.y;mouse.button=0;e.preventDefault();}},{passive:false});
+  arena.addEventListener('touchmove',e=>{if(!grab)return;const p=tpos(e.touches[0]);mouse.position.x=p.x;mouse.position.y=p.y;e.preventDefault();},{passive:false});
+  const endTouch=()=>{if(grab){grab=false;mouse.button=-1;}};
+  arena.addEventListener('touchend',endTouch);arena.addEventListener('touchcancel',endTouch);
+  const runner=Runner.create();Runner.run(runner,engine);
+  Events.on(engine,'afterUpdate',()=>{nodes.forEach(n=>{const x=n.body.position.x,y=n.body.position.y,a=n.body.angle;
+    const op=skActive?SKSHOW:n.scl, s=skActive?1:n.scl, lo=skActive?SKSHOW:n.lop;
+    n.el.style.transform=`translate(${x-n.R}px,${y-n.R}px) scale(${s}) rotate(${a}rad)`;n.el.style.opacity=op;
+    const dx=x-cx,dy=y-cy,d=Math.hypot(dx,dy)||1,br=42;
+    n.ln.setAttribute('x1',cx+dx/d*br);n.ln.setAttribute('y1',cy+dy/d*br);n.ln.setAttribute('x2',x);n.ln.setAttribute('y2',y);n.ln.setAttribute('stroke-opacity',lo);});});
+  SK={engine,world,cx,cy,nodes,arena,runner,mouse};
+}
+function resetSkills(){
+  if(!skBuilt)return;try{Matter.Runner.stop(SK.runner);Matter.World.clear(SK.world,false);Matter.Engine.clear(SK.engine);}catch(e){}
+  byId('arena').querySelectorAll('.skill-node').forEach(n=>n.remove());byId('links').innerHTML='';
+  skBuilt=false;skActive=false;SKSHOW=0;SK=null;
+}
+function revealSkills(t){const NS=SK.nodes.length;SK.nodes.forEach((n,i)=>{
+    const d=(i/NS)*0.4, L=clamp((t-d)/0.58,0,1);
+    const posP=smooth(clamp(L/0.62,0,1));
+    Matter.Body.setPosition(n.body,{x:SK.cx+(n.hx-SK.cx)*posP,y:SK.cy+(n.hy-SK.cy)*posP});
+    n.lop=clamp(L/0.12,0,1);
+    n.scl=L<0.5?0:backOut((L-0.5)/0.5);
+  });}
+function activateSkills(){if(skActive)return;skActive=true;
+  SK.nodes.forEach(n=>Matter.Body.setStatic(n.body,false));
+  const mc=Matter.MouseConstraint.create(SK.engine,{mouse:SK.mouse,constraint:{stiffness:.32,damping:.08,render:{visible:false}}});
+  Matter.Composite.add(SK.world,mc);SK.mc=mc;}
+function deactivateSkills(){if(!skActive)return;skActive=false;
+  if(SK.mc){Matter.Composite.remove(SK.world,SK.mc);SK.mc=null;}
+  SK.nodes.forEach(n=>{n.hx=n.body.position.x;n.hy=n.body.position.y;Matter.Body.setStatic(n.body,true);});
+}
+function renderSkillsReveal(revT){SKSHOW=smooth(revT);skLabel.style.opacity=String(smooth(revT*1.3));skHint.style.opacity=String(smooth((revT-0.35)/0.65));
+  if(revT>0.001)buildSkills();
+  if(skBuilt){
+    if(revT>=1){if(!skActive){revealSkills(1);activateSkills();}}
+    else{if(skActive)deactivateSkills();revealSkills(revT);}
+  }
+  skillsStage.style.pointerEvents=revT>0.55?'auto':'none';}
+
+/* ===== init + scroll ===== */
+layout();
+update(0);
+window.addEventListener('load',()=>setTimeout(()=>{ScrollTrigger.refresh();
+  const m=location.hash.match(/^#work-(\d+)/);
+  if(m){const k=clamp(parseInt(m[1],10),0,N-1),tp=N>1?k/(N-1):0,p=B+tp*(C-B);
+    window.scrollTo(0,p*(document.documentElement.scrollHeight-innerHeight));}
+  const st=ScrollTrigger.getAll()[0];ScrollTrigger.update();update(st?st.progress:0);
+  if(m){setTimeout(()=>{document.documentElement.classList.remove('work-return');pageFade.classList.remove('loading');pageFade.style.opacity='0';setTimeout(()=>{pageFade.style.opacity='';},600);},700);}
+  else {document.documentElement.classList.remove('work-return');pageFade.classList.remove('loading');}
+  if(location.hash)try{history.replaceState(null,'',location.pathname+location.search);}catch(e){}   // clear hash so a refresh shows the loader again
+},300));
+let rzT;window.addEventListener('resize',()=>{layout();ScrollTrigger.refresh();clearTimeout(rzT);rzT=setTimeout(resetSkills,180);});
+
+/* ===================== NAV ===================== */
+(function(){
+  const burger=byId('burger'),pop=byId('menuPop'),logo=byId('logo');
+  const vP=byId('viewProjects'),vC=byId('viewContact');
+  function closeAll(){pop.classList.remove('open');vP.classList.remove('open');vC.classList.remove('open');burger.classList.remove('spin');document.body.style.overflow='';}
+  function goHome(){const f=byId('pageFade');f.classList.add('show');                            // smooth fade to black FIRST — hides the overlay/menu closing underneath
+    setTimeout(function(){pop.style.transition='none';vP.style.transition='none';vC.style.transition='none';
+      closeAll();void pop.offsetWidth;pop.style.transition='';vP.style.transition='';vC.style.transition='';   // close menu + overlays instantly (no bubble, no bounce)
+      const st=ScrollTrigger.getAll()[0];if(st)st.scroll(0);window.scrollTo(0,0);update(0);
+      setTimeout(function(){update(0);requestAnimationFrame(function(){requestAnimationFrame(function(){f.classList.remove('show');});});},80);},520);}
+  burger.addEventListener('click',e=>{e.stopPropagation();const o=pop.classList.toggle('open');burger.classList.toggle('spin',o);});
+  document.querySelectorAll('.ov-link').forEach(l=>l.addEventListener('click',()=>{
+    const v=l.dataset.view;
+    if(v==='home'){goHome();return;}
+    const tgt=(v==='projects'?vP:vC);
+    pageFade.classList.add('show');                                                  // 1) smooth fade to black
+    setTimeout(function(){pop.style.transition='none';vP.style.transition='none';vC.style.transition='none';   // 2) once black: swap underneath instantly — no menu bounce, no clip-path bubble, no home flash
+      closeAll();topnav.classList.remove('dark');
+      tgt.classList.add('open');void tgt.offsetWidth;
+      pop.style.transition='';vP.style.transition='';vC.style.transition='';document.body.style.overflow='hidden';
+      requestAnimationFrame(function(){requestAnimationFrame(function(){pageFade.classList.remove('show');});});},520);}));
+  document.querySelectorAll('.ov-x').forEach(x=>x.addEventListener('click',closeAll));
+  logo.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();goHome();});
+  document.addEventListener('click',e=>{if(pop.classList.contains('open')&&!e.target.closest('#menuPop')&&!e.target.closest('#burger')){pop.classList.remove('open');burger.classList.remove('spin');}});
+  if(location.hash==='#contact'){vC.classList.add('open');topnav.classList.remove('dark');document.body.style.overflow='hidden';
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{document.documentElement.classList.remove('go-contact');pageFade.classList.remove('loading');pageFade.style.opacity='0';setTimeout(()=>{pageFade.style.opacity='';},600);}));}
+  if(location.hash==='#projects'){vP.style.transition='none';vP.classList.add('open');void vP.offsetWidth;vP.style.transition='';topnav.classList.remove('dark');document.body.style.overflow='hidden';   // open the carousel instantly under the cover (no clip-path bubble), then just fade the cover out
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{document.documentElement.classList.remove('work-return');pageFade.classList.remove('loading');pageFade.style.opacity='0';setTimeout(()=>{pageFade.style.opacity='';},600);}));}
+})();
+
+/* ===================== 3D PROJECT CAROUSEL ===================== */
+(function(){
+  if(!window.THREE)return;
+  const canvas=byId('glcanvas'),view=byId('viewProjects'),label=byId('carLabel');
+  const scene=new THREE.Scene();
+  const camera=new THREE.PerspectiveCamera(42,innerWidth/innerHeight,0.1,100);camera.position.set(0,0,15);
+  const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+  renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+  if('outputEncoding' in renderer && THREE.sRGBEncoding)renderer.outputEncoding=THREE.sRGBEncoding;
+  function resize(){const w=view.clientWidth||innerWidth,h=view.clientHeight||innerHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();}
+  resize();addEventListener('resize',resize);
+  const loader=new THREE.TextureLoader();
+  const N3=16,R=5,dAng=0.7,arc=0.5,cardH=(R*arc)/1.5,dY=1.15,SPAN=N3*dY,VK=dY/dAng,cards=[];
+  for(let i=0;i<N3;i++){
+    const p=PROJECTS[i%N];
+    const src=(window.CARDTEX&&CARDTEX[p.img])||p.img;
+    const tex=loader.load(src);if(THREE.sRGBEncoding)tex.encoding=THREE.sRGBEncoding;tex.anisotropy=4;
+    const geo=new THREE.CylinderGeometry(R,R,cardH,48,1,true,-arc/2,arc);
+    const mat=new THREE.MeshBasicMaterial({map:tex,side:THREE.DoubleSide,transparent:true,depthWrite:true});
+    const m=new THREE.Mesh(geo,mat);m.userData={pi:i%N,i};scene.add(m);cards.push(m);
+  }
+  const mod=(a,n)=>((a%n)+n)%n;
+  let phase=0,vel=0.0026,scrollVel=0,dragging=false,lastY=0,moved=0,hoverI=-1;
+  const ray=new THREE.Raycaster(),ptr=new THREE.Vector2();
+  function setPtr(e){const r=canvas.getBoundingClientRect();ptr.x=((e.clientX-r.left)/r.width)*2-1;ptr.y=-((e.clientY-r.top)/r.height)*2+1;}
+  function hit(){ray.setFromCamera(ptr,camera);return ray.intersectObjects(cards);}
+  const tmpV=new THREE.Vector3();
+  function tick(){
+    if(view.classList.contains('open')){
+      if(!dragging)phase+=vel+scrollVel;scrollVel*=0.9;
+      let hc=null;
+      cards.forEach(m=>{const i=m.userData.i,ang=i*dAng+phase;
+        m.rotation.y=ang;m.position.y=mod(i*dY-phase*VK,SPAN)-SPAN/2;
+        m.material.opacity=clamp((7-Math.abs(m.position.y))/2,0,1);m.visible=m.material.opacity>0.02;
+        const tgt=(i===hoverI&&m.visible)?1.16:1;m.scale.x+=(tgt-m.scale.x)*0.2;m.scale.y=m.scale.z=m.scale.x;
+        if(i===hoverI)hc=m;});
+      renderer.render(scene,camera);
+      if(hc&&hc.visible){
+        const ang=hc.userData.i*dAng+phase;
+        tmpV.set(Math.sin(ang)*R,hc.position.y,Math.cos(ang)*R).project(camera);
+        const sx=(tmpV.x*0.5+0.5)*canvas.clientWidth, sy=(-tmpV.y*0.5+0.5)*canvas.clientHeight;
+        const p=PROJECTS[hc.userData.pi];
+        label.innerHTML=`<b>${p.name}</b><span>${p.cat}</span>`;
+        label.style.left=sx+'px';label.style.top=(sy+canvas.clientHeight*0.12)+'px';label.style.opacity='1';
+      } else label.style.opacity='0';
+    }
+    requestAnimationFrame(tick);
+  }
+  tick();
+  canvas.addEventListener('pointerdown',e=>{dragging=true;lastY=e.clientY;moved=0;});
+  window.addEventListener('pointermove',e=>{if(dragging){const dy=e.clientY-lastY;lastY=e.clientY;moved+=Math.abs(dy);phase-=dy*0.006;}
+    setPtr(e);const h=hit();hoverI=h.length?h[0].object.userData.i:-1;canvas.style.cursor=h.length?'pointer':'';});
+  window.addEventListener('pointerup',()=>{dragging=false;});
+  canvas.addEventListener('wheel',e=>{e.preventDefault();
+    const d=e.deltaMode===1?e.deltaY*16:e.deltaMode===2?e.deltaY*innerHeight:e.deltaY;
+    scrollVel=clamp(scrollVel+d*0.0004,-0.05,0.05);},{passive:false});
+  canvas.addEventListener('click',e=>{if(moved>6)return;setPtr(e);const h=hit();if(h.length)goProject('project.html?p='+h[0].object.userData.pi+'&from=car');});
+})();
+
+/* ===================== CONTACT FORM → Google Sheet ===================== */
+(function(){
+  const form=byId('contactForm');if(!form)return;
+  const SHEET_ENDPOINT="https://script.google.com/macros/s/AKfycbxRSOVUu6xcT2ZZ0vM3keGJwlrD4Zb77xlxEnDAwImgYT1yBQCa5xySWGj9OO1nX_64Ag/exec";
+  const original=form.innerHTML;                                                   // keep a clean copy so the form can be reused
+  function back(){var ov=byId('viewContact'),x=ov.querySelector('.ov-x');
+    if(x){x.click();}else{ov.classList.remove('open');document.body.style.overflow='';}
+    setTimeout(function(){form.innerHTML=original;},700);}                          // restore the fresh form once the panel is hidden
+  function thanks(){form.innerHTML='<div class="ct-thanks"><p style="font-size:17px;line-height:1.5;color:#fff">Thank you! Your message has been sent.<br>I\'ll get back to you soon.</p><button type="button" id="ctBack" class="goback">← Go back</button></div>';var w=form.querySelector('.ct-thanks');requestAnimationFrame(function(){requestAnimationFrame(function(){if(w)w.classList.add('in');});});var b=byId('ctBack');if(b)b.addEventListener('click',back);}
+  form.addEventListener('submit',function(e){e.preventDefault();
+    var btn=byId('contactSubmit');if(btn){btn.disabled=true;btn.textContent='Sending…';}
+    var sink=document.getElementById('ctSink');                                    // hidden iframe → POST straight to the sheet: no CORS, works locally & hosted
+    if(!sink){sink=document.createElement('iframe');sink.name='ctSink';sink.id='ctSink';sink.style.display='none';document.body.appendChild(sink);}
+    form.action=SHEET_ENDPOINT;form.method='POST';form.target='ctSink';
+    var shown=false;function done(){if(shown)return;shown=true;thanks();}
+    sink.onload=done;setTimeout(done,2500);                                        // confirm on iframe load, with a safety fallback
+    form.submit();
+  });
+})();
+</script>
+</body>
+</html>
